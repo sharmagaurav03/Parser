@@ -23,38 +23,41 @@ import com.ef.transform.mapper.BlockedIPEntryMapper;
  */
 public class Parser {
 
-	private static final String LOG_FILE_PATH = "/Users/eifwhno/eclipse-workspace/Solution/files/access.log";
-
-
 	public static void main(String[] args) {
-		
 
+		Parser parser = new Parser();
+
+		// Extract provided program argument.
 		ProgramArgumentExtractor programArgumentExtractor = new ProgramArgumentExtractor();
-		ProgramArgument programArgument= programArgumentExtractor.extractProgramArguments(args);
-		
-		Map<String, Integer> filteredData = extractDataFromLog(programArgument);
-		
+		ProgramArgument programArgument = programArgumentExtractor.extractProgramArguments(args);
+
+		// Get the extracted data.
+		Map<String, Integer> filteredData = parser.extractDataFromLog(programArgument);
+
+		// Get the list of blocked ip entries to be persisted in db.
 		List<BlockedIPEntry> blockedIpEntries = new BlockedIPEntryMapper().map(filteredData);
 
-		Service<BlockedIPEntry, Long> blockedIPService = initiateServiceUsingDependencyInjection();
+		// Initiate the object structure using dependency injection. Spring Dependenency
+		// injection is preferred.
+		Service<BlockedIPEntry, Long> blockedIPService = parser.initiateServiceUsingDependencyInjection();
 
+		//Persist the logs data in DB.
 		blockedIPService.createEntities(blockedIpEntries);
 
 	}
 
-
-	private static Map<String, Integer> extractDataFromLog(ProgramArgument programArgument) {
-		DateTimeParserImpl dateTimeParser = new DateTimeParserImpl(programArgument.getStartDate(), programArgument.getDuration());
+	private Map<String, Integer> extractDataFromLog(ProgramArgument programArgument) {
+		DateTimeParserImpl dateTimeParser = new DateTimeParserImpl(programArgument.getStartDate(),
+				programArgument.getDuration());
 		LogContentParser logExtractor = new LogContentParser(dateTimeParser);
 		LogFileParser logFileParser = new LogFileParser(logExtractor);
-		logFileParser.parse(LOG_FILE_PATH);
+		logFileParser.parse(programArgument.getAccesslog());
 
 		Map<String, Integer> filteredData = new DataFilter().filterData(programArgument.getThreshold(), logExtractor);
 		return filteredData;
 	}
 
-
-	public static Service<BlockedIPEntry, Long> initiateServiceUsingDependencyInjection() {
+	public Service<BlockedIPEntry, Long> initiateServiceUsingDependencyInjection() {
 
 		JDBCHelper jdbcHelper = new MySQLHelper();
 		BlockedIPRepository repository = new BlockedIPRepository();
@@ -65,5 +68,5 @@ public class Parser {
 		return blockedIPService;
 
 	}
-	
+
 }

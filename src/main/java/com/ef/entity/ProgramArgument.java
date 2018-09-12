@@ -7,6 +7,7 @@ public class ProgramArgument {
 	private String startDate;
 	private String duration;
 	private int threshold;
+	private String accesslog;
 
 	public String getStartDate() {
 		return startDate;
@@ -28,6 +29,10 @@ public class ProgramArgument {
 		return threshold;
 	}
 
+	public void setThreshold(int threshold) {
+		this.threshold = threshold;
+	}
+
 	public void setThreshold(String threshold) {
 		try {
 			this.threshold = Integer.parseInt(threshold);
@@ -36,10 +41,19 @@ public class ProgramArgument {
 		}
 	}
 
+	public String getAccesslog() {
+		return accesslog;
+	}
+
+	public void setAccesslog(String accesslog) {
+		this.accesslog = accesslog;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((accesslog == null) ? 0 : accesslog.hashCode());
 		result = prime * result + ((duration == null) ? 0 : duration.hashCode());
 		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
 		result = prime * result + threshold;
@@ -55,6 +69,11 @@ public class ProgramArgument {
 		if (getClass() != obj.getClass())
 			return false;
 		ProgramArgument other = (ProgramArgument) obj;
+		if (accesslog == null) {
+			if (other.accesslog != null)
+				return false;
+		} else if (!accesslog.equals(other.accesslog))
+			return false;
 		if (duration == null) {
 			if (other.duration != null)
 				return false;
@@ -72,7 +91,8 @@ public class ProgramArgument {
 
 	@Override
 	public String toString() {
-		return "ProgramArgument [startDate=" + startDate + ", duration=" + duration + ", threshold=" + threshold + "]";
+		return "ProgramArgument [startDate=" + startDate + ", duration=" + duration + ", threshold=" + threshold
+				+ ", accesslog=" + accesslog + "]";
 	}
-
+	
 }

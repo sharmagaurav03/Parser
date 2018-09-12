@@ -14,7 +14,7 @@ public class ProgramArgumentExtractor {
 
 		ProgramArgument programArgument = new ProgramArgument();
 
-		if (arguments.length != 3) {
+		if (arguments.length != 4) {
 			printIllegalArgumentExceptionAndExit();
 		}
 
